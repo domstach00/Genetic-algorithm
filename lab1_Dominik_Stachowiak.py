@@ -1,7 +1,6 @@
 import json
 import random
 
-
 class Config:
     def __init__(self, width: int, height: int, machine_count: int):
         self.width = width
@@ -11,7 +10,10 @@ class Config:
         self.flows: dict[(int, int), int] = {}
         self.connections: dict[int, list[int]] = {}     # [source, <lista destynacji do których trzeba się połączyć z tanego źródła>]
 
-    def load_data(self, file_costs: str, file_flows: str):
+    def load_data(self, level: str):
+        file_costs = f'dane/{level}_cost.json'
+        file_flows = f'dane/{level}_flow.json'
+
         with open(file_flows) as file_flows:
             flows = json.load(file_flows)
         with open(file_costs) as costs_file:
@@ -29,7 +31,7 @@ class Config:
 
 
 
-class Adaptation_funcion:
+class Individual:
     def __init__(self, config: Config):
         self.config: Config = config
         self.list: list[int] = list(range(self.config.width * self.config.height))
@@ -60,15 +62,3 @@ class Adaptation_funcion:
         y = abs(source // self.config.height - dest // self.config.height)
         return x + y
 
-
-if __name__ == '__main__':
-    # Ustawienie konfuguracji wstępnej
-    config = Config(3, 3, 9)
-    config.load_data('dane/easy_cost.json', 'dane/easy_flow.json')
-
-    adaptation_f = Adaptation_funcion(config)
-    print("Pierwotny wygląd listy:", adaptation_f.list)
-    adaptation_f.shuffle(adaptation_f.list)  # tasujemy liste
-    print("Lista po przetasowaniu:", adaptation_f.list)
-    adaptation_f.calc_score()
-    print("Wynik funkcji przystosowania:", adaptation_f.score)

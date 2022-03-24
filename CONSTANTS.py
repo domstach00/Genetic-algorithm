@@ -1,0 +1,7 @@
+"""Algorithm CROSSOVER"""
+CROSSOVER_PX_PROBABILITY = 0.1
+
+"""Algorithm MUTATION"""
+MUTATION_PM_PROBABILITY = 0.1
+
+"""Algorithm SELECTION"""
