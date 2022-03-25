@@ -6,6 +6,7 @@ import CONSTANTS
 
 class TournamentSelection:
     tournament_batch_size = CONSTANTS.SELECTION_TOURNAMENT_BATCH_SIZE
+    tournament_winners_size = CONSTANTS.SELECTION_TOURNAMENT_WINNERS_SIZE
 
     @classmethod
     def select(cls, population: 'list[Individual]'):

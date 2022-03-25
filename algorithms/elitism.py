@@ -13,7 +13,7 @@ class Elitism:
             population = sorted(population)
             elites = population[:int(self.elite_count)]
             self.elites = [Individual.copy(elem) for elem in elites]
-        print(f"\tCURRENT ELITE: {elites[0].list}, score: {elites[0].score}")
+        # print(f"\tCURRENT ELITE: {elites[0].list}, score: {elites[0].score}")
 
     '''Replace the weakest individuals with elites'''
     def append_elites(self, population: 'list[Individual]'):

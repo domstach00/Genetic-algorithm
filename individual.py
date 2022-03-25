@@ -1,6 +1,4 @@
 import random
-import time
-
 from config import *
 
 
@@ -12,7 +10,6 @@ class Individual:
         self.fitness: float = None
 
     '''Random method'''
-
     def shuffle(self, elements=None):
         if elements is None:
             elements = self.list
@@ -24,55 +21,16 @@ class Individual:
     def calc_score(self):
         score = 0
         connections = self.config.connections
-        print(connections)
-        for key in connections:
-            for value in connections[key]:
-                cost = self.config.costs[(key, value)]
-                flow = self.config.flows[(key, value)]
-                source_position = self.list.index(key)
-                dest_position = self.list.index(value)
-                score += cost * flow * \
-                         (abs(source_position % self.config.width - dest_position % self.config.width) +
-                          abs(source_position // self.config.width - dest_position // self.config.width))
+
+        for src in connections:
+            for dest in connections[src]:
+                cost = self.config.costs[(src, dest)]
+                flow = self.config.flows[(src, dest)]
+                source_position = self.list[src]
+                dest_position = self.list[dest]
+                score += cost * flow * self.calc_manhattan(source_position, dest_position)
         self.score = score
         self.fitness = 1 / score
-
-    # def calc_score(self):
-    #     score = 0
-    #     connections = self.config.connections
-    #     for source in connections:
-    #         for dest in connections[source]:
-    #             # Read cost i flow for each connection
-    #             # cost = self.config.costs[(source, dest)]
-    #             # flow = self.config.flows[(source, dest)]
-    #             score += self.calculate_score_helper(source, dest)
-    #
-    #             # Calculate objective function
-    #             # score += cost * flow * self.calc_manhattan(self.list[source], self.list[dest])
-    #     self.score = score
-    #     self.fitness = 1 / score
-
-    def calculate_score_helper(self, source, dest):
-        distance = self.calculate_distance(source, dest)
-        cost = self.config.costs[(source, dest)]
-        flow = self.config.flows[(source, dest)]
-        print(f"cost: {cost}, flow: {flow}")
-        return distance * cost * flow
-
-    def calculate_distance(self, source, dest):
-        print("\n\n")
-        source_position = self.list[source]
-        print(f"source: {source_position}")
-        dest_position = self.list[dest]
-        print(f"dest: {dest_position}")
-        width = self.config.width
-        print(f"width: {width}")
-        height = self.config.height
-        print(f"height: {height}")
-        res = abs(source_position % width - dest_position % width) + \
-               abs(source_position // height - dest // height)
-        print(f"RES: {dest_position % width}")
-        return res
 
     '''Calculate Manhattan distance'''
     def calc_manhattan(self, source: int, dest: int) -> int:
