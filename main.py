@@ -1,6 +1,9 @@
-from lab1_Dominik_Stachowiak import *
+from individual import *
 from algorithms.crossover import *
 from algorithms.mutation import *
+from algorithms.selection import *
+from genetic_algorithm import *
+
 
 def lab1():
     # Ustawienie konfuguracji wstępnej
@@ -21,26 +24,31 @@ def do():
     list = []
     config = Config(3, 3, 9)
     config.load_data('easy')
-    for i in range(9):
-        elem = Individual(config)
-        elem.shuffle(elem.list)
-        elem.calc_score()
-        list.append(elem)
-
-    list[0].list = [0, 3, 2, 1]
-    list[0].config.machine_count = 3
-    list[1].list = [3, 4, 1, 7]
-
-    m = Mutation(list[0])
-    m.change_individual()
-    print(m.individual.list)
-
-    # c = Crossover(list[0], list[1])
-    # c.cross_parents()
-    print()
+    invidual = Individual(config)
+    invidual.list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    Mutation.change_individual(invidual)
+    print(invidual.list)
 
 
+def run():
+    config = Config(3, 3, 9)
+    config.load_data('easy')
+    ga = GeneticAlgorithm(config)
+    ga.initialise()
+    ga.run()
+
+
+def run_flat():
+    config = Config(5, 6, 24)
+    config.load_data('hard')
+    ga = GeneticAlgorithm(config)
+    ga.initialise()
+    ga.run()
 
 
 if __name__ == '__main__':
-    do()
+    run()
+    # list1 = [0, 1, 2, 3, 4, 5, 6, 7]
+    # list2 = ['X', 'Y', 'Z']
+    # list1[-1] = 'H'
+    # print(list1)
