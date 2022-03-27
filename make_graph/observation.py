@@ -1,16 +1,15 @@
 from individual import *
-from math import *
 
 
 class Observation:
-
     def __init__(self, list_of_individuals: 'list[Individual]'):
         self.list_of_individuals: 'list[Individual]' = list_of_individuals
         self.best_value: int = self.__find_best_value()
         self.worst_value: int = self.__find_worst_value()
         self.avg_value = self.__find_avg_value()
+        self.std_value = None
 
-    def print_resoults(self):
+    def print_res(self):
         print(f"Best: {self.best_value}, Worst: {self.worst_value}, Avg: {self.avg_value}")
 
     def __find_avg_value(self):

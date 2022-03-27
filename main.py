@@ -1,6 +1,7 @@
 from genetic_algorithm import *
 from make_graph.observation import *
 
+
 def run_easy():
     print("\n\n\tLEVEL: easy")
     config = Config(3, 3, 9)
@@ -28,17 +29,7 @@ def run_hard():
     ga.run()
 
 
-def run_test():
-    print("\n\n\tLEVEL: TEST")
-    config = Config(3, 3, 9)
-    config.load_data('easy')
-    ga = GeneticAlgorithm(config)
-    ga.initialise()
-    ga.run()
-
-
 if __name__ == '__main__':
-    # run_easy()
-    # run_flat() # problem with calcualting
+    run_easy()
+    run_flat()
     run_hard()
-    # run_test()

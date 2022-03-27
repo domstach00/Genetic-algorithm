@@ -7,10 +7,10 @@ from make_graph.observation import *
 import CONSTANTS
 
 
-
 class GeneticAlgorithm:
     pop_size = CONSTANTS.GA_POP_SIZE
     is_elitism_on: bool = CONSTANTS.ELITISM_IS_ON
+
 
     def __init__(self, config: Config):
         self.config = config
@@ -27,7 +27,6 @@ class GeneticAlgorithm:
         else:
             self.selection_alg = TournamentSelection
 
-
     def initialise(self):
         new_population = []
         for _ in range(self.pop_size):
@@ -37,6 +36,7 @@ class GeneticAlgorithm:
             new_population.append(new_elem)
         self.population = new_population
 
+    '''Start algorithm'''
     def run(self):
         self.__notify()
         for _ in range(self.iteration_limit):
@@ -46,10 +46,9 @@ class GeneticAlgorithm:
         self.finished = True
         self.__notify()
 
-
     def run_iteration(self):
-        # SELECT ELITES
         self.population = sorted(self.population)
+        # SELECT ELITES
         if self.is_elitism_on:
             self.elitism_alg.get_elite_copies(self.population)
 
@@ -58,40 +57,43 @@ class GeneticAlgorithm:
 
         # CROSSOVER
         if random.random() <= CONSTANTS.CROSSOVER_PX_PROBABILITY:
-            child1, child2 = self.cross_alg.cross_parents_create_individuals(parent1, parent2)
-        else:
-            child1 = Individual.copy(parent1)
-            child2 = Individual.copy(parent2)
-
-        self.population[-1] = child1
-        self.population[-2] = child2
+            child1, child2 = self.cross_alg.cross(parent1, parent1)
+            space_for_elites = 0
+            if self.is_elitism_on:
+                space_for_elites = self.elitism_alg.elite_count
+            self.population[-1 - space_for_elites] = child1
+            self.population[-2 - space_for_elites] = child2
 
         # MUTATION
-        for elem in self.population:
-            Mutation.change_individual(elem)
+        if random.random() <= CONSTANTS.MUTATION_PM_PROBABILITY:
+            for elem in self.population:
+                Mutation.change_individual(elem)
 
         # Calculate new scores for individuals in population
         for elem in self.population:
             elem.calc_score()
 
-        self.population = sorted(self.population)
+        # Replace the worst individuals with elites
         if self.is_elitism_on:
+            self.population = sorted(self.population)
             for i in range(1, self.elitism_alg.elite_count + 1):
                 self.population[-i] = self.elitism_alg.elites[i-1]
-            self.population = sorted(self.population)
 
-
+    '''Save a view of new population in observer to make a plot when GA is finished'''
     def __notify(self):
         self.list_of_observations.append(Observation(self.population))
         best = [0, 0, 0, 0, 0]
         for i in range(5):
             best[i] = self.population[i].score
 
-        print(f"Iteration:  {self.current_iteration}/{self.iteration_limit} | Top 5: {best}     | current best: {min(best)}")
+        if CONSTANTS.CONSOLE_PRINT_ITERATIONS:
+            print(f"Iteration:  {self.current_iteration}/{self.iteration_limit} | Top 5: {best}     | current best: {min(best)}")
         if self.finished:
-            print(f"Best setup: {self.population[0].list}")
+            if CONSTANTS.CONSOLE_PRINT_LAST_ITERATION:
+                print(
+                    f"Last iteration:  {self.current_iteration}/{self.iteration_limit} | Top 5: {best}     "
+                    f"| current best: {min(best)}")
+            if CONSTANTS.CONSOLE_PRINT_BEST_SETUP:
+                print(f"Best setup: {self.population[0].list}")
             graph = Graph(self.list_of_observations, self.config)
             graph.make_graph()
-
-
-

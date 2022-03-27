@@ -3,10 +3,8 @@ import random
 import CONSTANTS
 
 
-
 class TournamentSelection:
     tournament_batch_size = CONSTANTS.SELECTION_TOURNAMENT_BATCH_SIZE
-    tournament_winners_size = CONSTANTS.SELECTION_TOURNAMENT_WINNERS_SIZE
 
     @classmethod
     def select(cls, population: 'list[Individual]'):
@@ -14,16 +12,16 @@ class TournamentSelection:
 
         for _ in range(2):
             competitors = random.choices(population, k=cls.tournament_batch_size)
-            new.append(cls.__select_winner(competitors))
+            new.append(cls.__select_winner(competitors, new))
 
         return new[0], new[1]
 
     @classmethod
-    def __select_winner(cls, competitors: 'list[Individual]'):
+    def __select_winner(cls, competitors: 'list[Individual]', used: list):
         winner = competitors[0]
 
         for elem in competitors:
-            if elem.fitness > winner.fitness:
+            if elem.fitness > winner.fitness and elem not in used:
                 winner = elem
 
         return winner

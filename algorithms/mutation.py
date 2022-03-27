@@ -11,11 +11,12 @@ class Mutation:
     def change_individual(cls, individual: Individual):
         for elem_number in range(len(individual.list)):
             if random.random() <= cls.Pm_probability:
-                new = random.randint(0, individual.config.machine_count)
+                new = random.randint(0, individual.config.machine_count - 1)
                 try:
                     individual.list[individual.list.index(new)] = individual.list[elem_number]
                     individual.list[elem_number] = new
                 except ValueError:
+                    print(f"Value Error: new {new}, elem_number: {elem_number}")
                     individual.list[elem_number] = new
 
         individual.calc_score()

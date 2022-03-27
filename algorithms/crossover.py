@@ -3,72 +3,50 @@ import random
 import CONSTANTS
 
 
-def reverse_dictionary_odl(dictionary: dict) -> dict:
-    # print(dictionary.values())
-    # reverse_dictionary = {v: k for k, v in dictionary.items()}
-    reverse_dictionary = {}
-    for k, v in dictionary.items():
-        reverse_dictionary[v] = dictionary.get(v, []) + [k]
-    return reverse_dictionary
-
-
 class Crossover:
-    """Create point where to seperate parents"""
-    def __choose_point(self):
-        return random.randrange(1, len(self.parent_1.list))
 
-    '''Create children only as a lists'''
-    def cross_parents_TUTAJ(self) -> (list, list):
-        # Create dictionaries
-        used_p1, used_p2 = self.create_dictionary()
+    """Cross parents to make and return 2 children"""
+    def cross(self, parent1: Individual, parent2: Individual):
+        self.p1 = Individual.copy(parent1)
+        self.p2 = Individual.copy(parent2)
+        cut_point = random.randint(0, len(parent1.list))
+        used = {}
+        used_reversed = {}
+        for i in range(cut_point):
+            old = self.p1.list[i]
+            new = self.p2.list[i]
 
-
-        # Create children
-        child_1 = self.__cross_parents(self.parent_1, used_p1, used_p2)
-        child_2 = self.__cross_parents(self.parent_2, used_p2, used_p1)
-
-        return child_1, child_2
-
-    '''Create children as individuals and calculate score'''
-    def cross_parents_create_individuals(self, parent_1: Individual, parent_2: Individual) -> (Individual, Individual):
-        self.parent_1 = parent_1
-        self.parent_2 = parent_2
-        self.cross_point = self.__choose_point()
-
-        child_1, child_2 = self.cross_parents_TUTAJ()
-
-        child_individual_1 = Individual(self.parent_1.config)
-        child_individual_2 = Individual(self.parent_2.config)
-
-        child_individual_1.list = child_1
-        child_individual_2.list = child_2
-
-        child_individual_1.calc_score()
-        child_individual_2.calc_score()
-
-        return child_individual_1, child_individual_2
-
-    '''Make dictionary until the cross_point is reached'''
-    def create_dictionary(self):
-        dictionary = {}
-        reverse_dictionary = {}
-        for elem_1, elem_2, elem_number in zip(self.parent_1.list, self.parent_2.list, range(len(self.parent_1.list))):
-            if self.cross_point > elem_number:
-                dictionary[elem_1] = elem_2
+            if new not in used_reversed and old not in used:
+                used[new] = old
+                used_reversed[old] = new
+            elif new in used_reversed and old in used:
+                used[used_reversed[new]] = used[old]
+                used_reversed[used[old]] = used_reversed[new]
+                used.pop(old)
+                used_reversed.pop(new)
+            elif new in used_reversed:
+                used_reversed[old] = used_reversed[new]
+                used[used_reversed[new]] = old
+                used_reversed.pop(new)
             else:
-                break
-        return dictionary, reverse_dictionary
+                used[new] = used[old]
+                used_reversed[used[new]] = old
+                used.pop(old)
 
-    '''Cross the parents to make child and fix it if necessary'''
-    def __cross_parents(self, p_1: Individual, dictionary: dict, reverse_dictionary: dict) -> list:
-        child = []
-        for elem_1, elem_number in zip(p_1.list, range(len(p_1.list))):
-            if elem_number < self.cross_point and elem_1 in dictionary:
-                child.append(dictionary[elem_1])
-            elif elem_number > self.cross_point and elem_1 in reverse_dictionary:
-                # Here we make a fix if the moved element is already in list,
-                # then we just use reverse dictionary to give a correct value
-                child.append(reverse_dictionary[elem_1])
-            else:
-                child.append(elem_1)
-        return child
+            self.p1.list[i] = new
+            self.p2.list[i] = old
+
+
+        for i in range(cut_point, len(self.p1.list)):
+            self_gen = self.p1.list[i]
+            if self_gen in used:
+                self.p1.list[i] = used[self_gen]
+
+            other_gen = self.p1.list[i]
+            if other_gen in used_reversed:
+                self.p2.list[i] = used_reversed[other_gen]
+
+        self.p1.calc_score()
+        self.p2.calc_score()
+
+        return self.p1, self.p2

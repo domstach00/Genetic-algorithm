@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 class Graph:
-    graph_number = 1
+    graph_number_id = 1
     graph_style = GRAPH_STYLE
 
     def __init__(self, list_of_observations: 'list[Observation]', config: Config):
@@ -34,7 +34,7 @@ class Graph:
         return text
 
     def make_graph(self):
-        graph_name = f"Graph nr_{self.graph_number}"
+        graph_name = f"Graph nr_{self.graph_number_id}"
         plt.title(graph_name)
         plt.figtext(.15, .76, self.__get_details())
         plt.style.use(self.graph_style)
@@ -43,12 +43,13 @@ class Graph:
         plt.plot(self.field_graph, self.line_worst,  label="Worst value", color=GRAPH_COLORS['worst'])
         plt.xlabel('Iteration')
         plt.ylabel('Score')
+        plt.xlim(xmin=0, xmax=GA_ITERATIONS)
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
         if GRAPH_SAVE:
             plt.savefig(f"{graph_name}.png")
         plt.show()
-        self.graph_number += 1
+        self.graph_number_id += 1
 
 

@@ -1,3 +1,4 @@
+import math
 import random
 from config import *
 
@@ -5,7 +6,7 @@ from config import *
 class Individual:
     def __init__(self, config: Config):
         self.config: Config = config
-        self.list: list[int] = list(range(self.config.width * self.config.height))
+        self.list: list[int] = list(range(self.config.machine_count))
         self.score: int = None
         self.fitness: float = None
 
@@ -30,18 +31,21 @@ class Individual:
                 dest_position = self.list[dest]
                 score += cost * flow * self.calc_manhattan(source_position, dest_position)
         self.score = score
-        self.fitness = 1 / score
+        self.fitness = self.__calc_fitness()
+
+    def __calc_fitness(self):
+        return math.e**(1 / self.score)
 
     '''Calculate Manhattan distance'''
-    def calc_manhattan(self, source: int, dest: int) -> int:
-        x = abs(source % self.config.width - dest % self.config.width)
+    def calc_manhattan(self, source: int, dest: int):
+        x = abs(source % self.config.height - dest % self.config.height)
         y = abs(source // self.config.height - dest // self.config.height)
         return x + y
 
     @classmethod
     def copy(cls, other):
         new: Individual = cls(other.config)
-        new.list = other.list
+        new.list = list(other.list)     # We need to add a list constructor so that no reference is passed
         new.score = other.score
         new.fitness = other.fitness
         return new
