@@ -59,10 +59,19 @@ class GeneticAlgorithm:
         if random.random() <= CONSTANTS.CROSSOVER_PX_PROBABILITY:
             child1, child2 = self.cross_alg.cross(parent1, parent1)
             space_for_elites = 0
+            # If elitism is on we save the worsts individual to replace them with elites
             if self.is_elitism_on:
                 space_for_elites = self.elitism_alg.elite_count
-            self.population[-1 - space_for_elites] = child1
-            self.population[-2 - space_for_elites] = child2
+
+            # Way of replace individual with a new child
+            if CONSTANTS.CHILD_REPLACE[CONSTANTS.GA_CHILD_REPLACE_WORST]:
+                # Here we replace parent with a child
+                self.population[self.population.index(parent1)] = child1
+                self.population[self.population.index(parent2)] = child2
+            else:
+                # Here we replace child with the worst element
+                self.population[-1 - space_for_elites] = child1
+                self.population[-2 - space_for_elites] = child2
 
         # MUTATION
         if random.random() <= CONSTANTS.MUTATION_PM_PROBABILITY:

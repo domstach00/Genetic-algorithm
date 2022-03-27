@@ -8,11 +8,18 @@ MUTATION_PM_PROBABILITY = 0.1
 GA_POP_SIZE = 1000
 GA_ITERATIONS = 100
 
+# 0 - Child replace parent, 1 - Child replace the worst individual
+GA_CHILD_REPLACE_WORST = 1
+CHILD_REPLACE = {
+    0: False,
+    1: True
+}
+
 """Algorithm SELECTION"""
 SELECTION_TOURNAMENT_BATCH_SIZE = 500
 
 """Algorithm ELITISM"""
-ELITISM_IS_ON: bool = True
+ELITISM_IS_ON: bool = False
 ELITISM_LIST_SIZE = int(GA_POP_SIZE * 0.02)     # 2%
 
 # 0 - roulette, 1 - tournament
